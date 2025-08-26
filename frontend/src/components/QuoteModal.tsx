@@ -30,8 +30,9 @@ export default function QuoteModal() {
     ? [{ product: state.selectedProduct, quantity: 1, selectedVariations: {}, totalPrice: state.selectedProduct.price }]
     : state.cart;
 
-  // Lire la clé API depuis les variables d'environnement Vite
-  const apiKey = (import.meta.env as any).VITE_API_KEY || '';
+  // Lire la clé API depuis les variables d'environnement Vite et la normaliser (trim)
+  const rawApiKey = (import.meta.env as any).VITE_API_KEY || '';
+  const apiKey = rawApiKey.toString().trim();
   if (!apiKey) {
     console.warn('VITE_API_KEY n\'est pas défini. Les requêtes /send-quote seront rejetées avec 401.');
   }
