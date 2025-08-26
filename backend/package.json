@@ -7,11 +7,12 @@
     "node": "20.x"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "server": "node server.js",
-    "test:verify-update": "node test/verify-update-product.mjs",
-    "build": "echo 'No build step required'"
+  "start": "node server.js",
+  "dev": "node server.js",
+  "server": "node server.js",
+  "test:verify-update": "node test/verify-update-product.mjs",
+  "build": "echo 'No build step required'",
+  "postinstall": "npx playwright install --with-deps"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.3",
