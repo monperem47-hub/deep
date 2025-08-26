@@ -12,7 +12,7 @@
   "server": "node server.js",
   "test:verify-update": "node test/verify-update-product.mjs",
   "build": "echo 'No build step required'",
-  "postinstall": "npx playwright install --with-deps"
+  "postinstall": "npx playwright install chromium"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.3",
