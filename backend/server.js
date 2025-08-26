@@ -234,10 +234,11 @@ app.get('/', (req, res) => {
     });
 });
 
-// Middleware API Key
-const apiKey = process.env.API_KEY || process.env.VITE_API_KEY;
+// Middleware API Key (trim values to avoid trailing whitespace/newline mismatches)
+const apiKey = (process.env.API_KEY || process.env.VITE_API_KEY || '').toString().trim();
 app.use('/send-quote', (req, res, next) => {
-    const clientKey = req.headers['x-api-key'];
+    const rawClientKey = req.headers['x-api-key'] || '';
+    const clientKey = rawClientKey.toString().trim();
     if (!apiKey) {
         console.error('❌ VARIABLE API_KEY NON CONFIGURÉE');
         return res.status(500).json({ 
@@ -247,7 +248,8 @@ app.use('/send-quote', (req, res, next) => {
         });
     }
     if (clientKey !== apiKey) {
-        console.warn('Clé API invalide reçue:', clientKey);
+        const masked = clientKey ? `${clientKey.slice(0,6)}...` : '(empty)';
+        console.warn('Clé API invalide reçue (masked):', masked);
         return res.status(401).json({ 
             success: false, 
             error: 'Non autorisé: Clé API invalide ou manquante.',
