@@ -263,15 +263,22 @@ app.use('/send-quote', (req, res, next) => {
 app.post('/send-quote', async (req, res) => {
     try {
         console.log('🔍 Début du processus de génération de devis');
+
+        // Normaliser / trim des variables d'environnement SMTP pour éviter les \n/espaces
+        const SMTP_HOST = (process.env.SMTP_HOST || '').toString().trim();
+        const SMTP_PORT = (process.env.SMTP_PORT || '').toString().trim();
+        const SMTP_USER = (process.env.SMTP_USER || '').toString().trim();
+        const SMTP_PASS = (process.env.SMTP_PASS || '').toString().trim();
+        const RECEIVER_EMAIL = (process.env.RECEIVER_EMAIL || '').toString().trim();
+
         console.log('📧 Configuration SMTP:', {
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT,
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS ? '(configuré)' : '(non configuré)'
+            host: SMTP_HOST || '(non configuré)',
+            port: SMTP_PORT || '(non configuré)',
+            user: SMTP_USER ? 'CONFIGURÉ' : '(non configuré)',
+            pass: SMTP_PASS ? 'CONFIGURÉ' : '(non configuré)'
         });
-        
+
         // Vérification de la configuration SMTP
-        const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, RECEIVER_EMAIL } = process.env;
         
         if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
             console.error('❌ Configuration SMTP manquante');
@@ -339,8 +346,8 @@ app.post('/send-quote', async (req, res) => {
             return sum + (isNaN(itemTotal) ? 0 : itemTotal);
         }, 0);
 
-        // Configuration Nodemailer
-        const transporter = nodemailer.createTransporter({
+        // Configuration Nodemailer (utiliser createTransport)
+        const transporter = nodemailer.createTransport({
             host: SMTP_HOST,
             port: Number(SMTP_PORT) || 587,
             secure: String(SMTP_PORT) === '465',
