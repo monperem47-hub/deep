@@ -22,7 +22,7 @@ export default defineConfig({
   },
   preview: {
     // allow Render preview host when using `vite preview` or preview URLs
-    allowedHosts: ['bedoui-frontend.onrender.com']
+    allowedHosts: ['bedoui-frontend-k7h9.onrender.com']
   },
   define: {
     'process.env': process.env
