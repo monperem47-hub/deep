@@ -6,12 +6,13 @@
   "engines": {
     "node": "20.x"
   },
-  "scripts": {
+   "scripts": {
   "start": "node server.js",
   "dev": "node server.js",
   "server": "node server.js",
   "test:verify-update": "node test/verify-update-product.mjs",
   "build": "echo 'No build step required'",
+  "preinstall": "mkdir -p ./ms-playwright || true",
   "postinstall": "PLAYWRIGHT_BROWSERS_PATH=./ms-playwright npx playwright install chromium"
   },
   "dependencies": {
