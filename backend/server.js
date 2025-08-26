@@ -91,7 +91,7 @@ let playwrightConfig = {
         '--disable-renderer-backgrounding'
     ],
     headless: true,
-    executablePath: undefined,
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || '/usr/bin/chromium',
     chromiumSandbox: false
 };
 
