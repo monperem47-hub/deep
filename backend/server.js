@@ -17,10 +17,20 @@ dotenv.config();
 // Configuration Playwright
 const isProd = process.env.NODE_ENV === 'production';
 
+// Configuration Playwright pour la génération de PDF
 const playwrightConfig = {
-    args: chromium.args,
+    args: [
+        ...chromium.args,
+        '--disable-web-security',
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
+    ],
     executablePath: await chromium.executablePath(),
-    headless: chromium.headless
+    headless: true,
+    defaultViewport: {
+        width: 1920,
+        height: 1080
+    }
 };
 
 // Configuration des tokens de téléchargement
@@ -556,36 +566,55 @@ app.post('/send-quote', async (req, res) => {
         // Génération PDF avec Playwright
         let pdfBuffer;
         try {
-            console.log('Lancement du navigateur...');
+            console.log('🚀 Lancement du navigateur...');
             
-            // Détection de l'exécutable Chromium
-            try {
-                const detected = await findChromiumExecutable();
-                if (detected) {
-                    playwrightConfig.executablePath = detected;
-                }
-                console.log('Chemin exécutable Playwright (détecté):', playwrightConfig.executablePath);
-            } catch (e) {
-                console.warn('Impossible de détecter automatiquement l\'exécutable playwright:', e && e.message);
-            }
+            let browser = null;
+            let context = null;
+            let page = null;
 
-            const browser = await playwright.chromium.launch(playwrightConfig);
-            console.log('Navigateur lancé avec succès');
-            
-            const context = await browser.newContext();
-            console.log('Contexte créé avec succès');
-            
-            const page = await context.newPage();
-            console.log('Page créée avec succès');
-            
-            await page.setContent(pdfHtml);
-            console.log('Contenu défini avec succès');
-            
-            pdfBuffer = await page.pdf({ 
-                format: 'A4',
-                margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' },
-                printBackground: true
-            });
+            try {
+                // Lancement du navigateur avec la nouvelle configuration
+                browser = await playwright.chromium.launch(playwrightConfig);
+                console.log('✅ Navigateur lancé avec succès');
+                
+                // Création du contexte avec des paramètres optimisés
+                context = await browser.newContext({
+                    viewport: { width: 1920, height: 1080 },
+                    deviceScaleFactor: 2
+                });
+                console.log('✅ Contexte créé avec succès');
+                
+                // Création de la page
+                page = await context.newPage();
+                console.log('✅ Page créée avec succès');
+                
+                // Chargement du contenu avec timeout et gestion d'erreur
+                console.log('🔄 Chargement du contenu HTML...');
+                await page.setContent(pdfHtml, {
+                    timeout: 30000,
+                    waitUntil: 'networkidle'
+                });
+                console.log('✅ Contenu HTML chargé avec succès');
+                
+                // Génération du PDF avec paramètres optimisés
+                console.log('🔄 Génération du PDF...');
+                pdfBuffer = await page.pdf({ 
+                    format: 'A4',
+                    margin: { top: '10mm', bottom: '10mm', left: '10mm', right: '10mm' },
+                    printBackground: true,
+                    preferCSSPageSize: true,
+                    scale: 0.8
+                });
+                console.log('✅ PDF généré avec succès, taille:', pdfBuffer.length, 'octets');
+            } catch (error) {
+                console.error('❌ Erreur lors de la génération du PDF:', error);
+                throw new Error('Erreur lors de la génération du PDF: ' + error.message);
+            } finally {
+                // Nettoyage des ressources
+                if (page) await page.close();
+                if (context) await context.close();
+                if (browser) await browser.close();
+            }
             console.log('PDF généré avec succès, taille:', pdfBuffer.length, 'octets');
             
             await context.close();
