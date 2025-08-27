@@ -187,39 +187,11 @@
     <div class="brand">
       <h1>DEVIS</h1>
       <div class="company-info">
-        <div class="company-name"><%= companyName || 'Bedouielec Transformateurs' %></div>
-        <div class="details">
-          <% if (companyAddress) { %>
-            <div class="detail-row"><%= companyAddress %></div>
-          <% } %>
-          <% if (companyPhone) { %>
-            <div class="detail-row">Tél: <%= companyPhone %></div>
-          <% } %>
-          <% if (companyEmail) { %>
-            <div class="detail-row">Email: <%= companyEmail %></div>
-          <% } %>
-          <% if (companySite) { %>
-            <div class="detail-row">Site web: <%= companySite %></div>
-          <% } %>
-          <div class="legal-details">
-            <% if (companySiret) { %>
-              <div>SIRET: <%= companySiret %></div>
-            <% } %>
-            <% if (companyApe) { %>
-              <div>Code APE: <%= companyApe %></div>
-            <% } %>
-            <% if (companyTva) { %>
-              <div>N° TVA: <%= companyTva %></div>
-            <% } %>
-          </div>
-        </div>
+        
+          
       </div>
     </div>
-    <div class="logo">
-      <% if (typeof logoUrl !== 'undefined' && logoUrl) { %>
-        <img src="<%= logoUrl %>" alt="logo" style="max-width:160px;" />
-      <% } %>
-    </div>
+    
   </div>
 
   <div class="meta-row">
