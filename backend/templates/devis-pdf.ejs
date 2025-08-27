@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="fr">
 <head>
@@ -187,11 +188,17 @@
     <div class="brand">
       <h1>DEVIS</h1>
       <div class="company-info">
-        
-          
+        <div class="company-name"><%= companyName || 'Bedouielec Transformateurs' %></div>
+        <div class="details">
+          <!-- Company contact and legal details intentionally omitted from PDFs -->
+        </div>
       </div>
     </div>
-    
+    <div class="logo">
+      <% if (typeof logoUrl !== 'undefined' && logoUrl) { %>
+        <img src="<%= logoUrl %>" alt="logo" style="max-width:160px;" />
+      <% } %>
+    </div>
   </div>
 
   <div class="meta-row">
